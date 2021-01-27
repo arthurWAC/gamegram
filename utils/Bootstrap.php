@@ -12,7 +12,8 @@ define('LINK', 'link');
 
 // Eléments
 define('BTN', 'btn');
-define('ALERT', 'alert');
+define('BADGE', 'badge');
+define('BG', 'bg');
 
 class Bootstrap
 {
@@ -27,11 +28,16 @@ class Bootstrap
 	private $menuItems = [];
 	private $displayRecherche;
 	
+	// Pour les alerts
+	private $Alert;
+
 	// Constructeur
 	public function __construct($title, $description = '')
 	{
 		$this->title = $title;
 		$this->description = $description;
+
+		$this->Alert = new Alert;
 	}
 	
 	// Méthodes spécifiques - private par défaut
@@ -67,7 +73,8 @@ class Bootstrap
 	
 	public function startMain()
 	{
-		return '<main class="container">';
+		return '<main class="container">' . 
+			   $this->Alert->getAlertHTML();
 	}
 	
 	public function endMain()
@@ -148,6 +155,27 @@ class Bootstrap
 		
 		return '<a href="'. $link .'" class="'. $class .'">' . $name . '</a>';
 	}
+
+	public function badge($text, $options = [])
+	{
+		// Gestion de la couleur
+		$color = $options['color'] ?? PRIMARY; 
+		
+		// Class par défaut
+		$class = BADGE . ' ' . BG . '-' . $color . ' ';
+		
+		// Classes supplémentaires
+		$class .= $options['class'] ?? '';
+
+		return '<span class="'. $class .'">'. $text .'</span>';
+	}
+
+	public function alert($text, $options = []) {
+		$alert = new BootstrapAlert($text, $options);
+		return $alert->alert();
+	}
+	
+
 	
 	// Getteurs / Setteurs - public par défaut
 	public function setDisplayRecherche($mode)

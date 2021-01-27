@@ -6,8 +6,12 @@ define('METHODS', [METHOD_POST, METHOD_GET]);
 define('TYPE_TEXT', 'text'); // Champ texte
 define('TYPE_PASSWORD', 'password'); // Champ mot de passe
 define('TYPE_NUMBER', 'number'); // Champ numérique
+define('TYPE_EMAIL', 'email'); // Champ mail
 define('TYPE_HIDDEN', 'hidden'); // Champ caché
-define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN]);
+define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN, TYPE_EMAIL]);
+
+define('FORM_CONTROL', 'form-control');
+define('FORM_LABEL', 'form-label');
 
 class BootstrapForm
 {
@@ -19,6 +23,8 @@ class BootstrapForm
 	private $inputs = []; // Tous nos champs
 	
 	private $submit = []; // Informations de notre bouton submit
+
+	private $htmlAttributs; // Pour gérer efficacement les attributs HTML des mes inputs
 	
 	// Constructeur
 	public function __construct($name, $action, $method = METHOD_POST)
@@ -60,19 +66,40 @@ class BootstrapForm
 		
 		if ($type != TYPE_HIDDEN) {
 			$label = $options['label'] ?? $name;
-			$input .= '<label for="'. $id .'" class="form-label">'. $label .'</label>';
+			$input .= '<label for="'. $id .'" class="'. FORM_LABEL .'">'. $label .'</label>';
+		}
+
+		// Mes attributs HTML supplémentaires
+		$this->htmlAttributs = '';
+
+		// Je vais gérer les options step, min, max pour les types number
+		if ($type === TYPE_NUMBER) {
+			$this->handleHtmlAttributs($options, 'step');
+			$this->handleHtmlAttributs($options, 'min');
+			$this->handleHtmlAttributs($options, 'max');
+		}
+
+		// placeholder, en dehors des champs hidden
+		if ($type !== TYPE_HIDDEN) {
+			$this->handleHtmlAttributs($options, 'placeholder');
 		}
 		
-		// TODO : rajouter le type email (pour le champ username dans inscription.php)
-		// TODO : autres options à gérer : placeholder, value, step, min, max
-		// TODO : manipuler la grille pour avoir un rendu visuel + sympa, ne pas avoir des input qui prennent 100% de large
-		// TODO : mettre form-label et form-control dans des constantes (à la manière de BTN)
+		// et value, pour tout le monde
+		$this->handleHtmlAttributs($options, 'value');
 		
-		$input .= '<input type="'. $type .'" class="form-control" id="'. $id .'" name="'. $this->slug($name) .'"/>';
+		// Construction de mon <input ... />
+		$input .= '<input type="'. $type .'" class="'. FORM_CONTROL .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'/>';
 	
 		$input .= '</div>';
 		
 		return $input;
+	}
+
+	private function handleHtmlAttributs($options, $field)
+	{
+		if (isset($options[$field])) {
+			$this->htmlAttributs .= $field . '="'. $options[$field] .'" ';
+		}
 	}
 	
 	public function setSubmit($name, $options = [])
