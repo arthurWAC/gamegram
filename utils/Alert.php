@@ -1,6 +1,5 @@
 <?php
 define('SESSION_ALERT', 'session_alert');
-// à utiliser : $_SESSION[SESSION_ALERT]
 
 class Alert
 {
@@ -18,7 +17,8 @@ class Alert
     // Méthode qui redirige
     public function redirect($link)
     {
-        return header('Location: ' . $link);
+        header('Location: ' . $link);
+        exit;
     }
 
     // Méthode qui renvoie l'HTML de l'alerte

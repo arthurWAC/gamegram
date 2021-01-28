@@ -10,7 +10,31 @@ class ORM
     private $connexion; // Contient la connexion à ma BDD
     private $query; // Contient la requête liée à la BDD
 
+    // CONSTRUCTION DE LA REQUETE SQL
     private $sql;
+
+    // Pour toutes mes requêtes
+    private $table;
+
+    // Pour ma requête SELECT
+    private $selectFields;
+
+    // Pour mon WHERE
+    private $whereFieldsAndValues;
+    private $typeWhere;
+
+    // Pour le ORDER
+    private $orderFieldsAndDirection;
+
+    // Pour le INSERT
+    private $insertFieldsAndValues;
+        // Ex. dans Family.php
+        // $this->addInsertFields('name', $name, PDO::PARAM_STR);
+        // Pas $this->get('...');
+        // $this->launch(); // Regarder du côte de "exec"
+
+    // Permet de savoir si une entrée donnée existe
+    private $existInBDD = false; 
 
     // Doit me permettre de me connecter à ma base de données (Constructeur)
     public function __construct()
@@ -20,18 +44,30 @@ class ORM
             BDD_USER,
             BDD_PASS
         );
+
+        $this->resetPropertiesSQL(); // ou setDefaultValuesSQL
     }
 
-    // SQL ??
-    public function setSQL($sql)
+    // On remet "à zéro" les propriétés qui permettent de créer la requête SQL
+    private function resetPropertiesSQL()
     {
-        $this->sql = $sql;
+        // Pour ma requête SELECT
+        $this->selectFields = [];
+
+        // Pour mon WHERE
+        $this->whereFieldsAndValues = [];
+        $this->typeWhere = 'AND';
+
+        // Pour mon ORDER
+        $this->orderFieldsAndDirection = [];
     }
 
     // Doit me permettre d'executer des requêtes
     private function execute()
     {
+        // On construit la requête
         $this->buildSelectSQL();
+
         $this->query = $this->connexion->prepare($this->sql);
 
         // bindValue
@@ -48,6 +84,9 @@ class ORM
             // Erreur requête ?
             die('Erreur [ORM 002] : ' . $this->query->errorInfo()[2]);
         }
+        
+        // On remet "à zéro" les propriétés qui permettent de créer la requête SQL
+        $this->resetPropertiesSQL(); 
     }
 
     // Doit me permettre d'extraire le résultat de ces requêtes
@@ -61,7 +100,7 @@ class ORM
 
         switch ($type) {
             case TYPE_GET_ALL:
-                return $this->query->fetchAll();
+                return $this->query->fetchAll(PDO::FETCH_CLASS);
             break;
 
             case TYPE_GET_FIRST:
@@ -73,20 +112,6 @@ class ORM
             break;
         }
     }
-
-    // Doit me permettre de gérer les erreurs (éventuelles) de mes requêtes
-
-    // CONSTRUCTION DE LA REQUETE SQL
-
-    // Pour toutes mes requêtes
-    private $table;
-
-    // Pour ma requête SELECT
-    private $selectFields = [];
-
-    // Pour mon WHERE
-    private $whereFieldsAndValues = [];
-    private $typeWhere = 'AND';
 
     public function setTable($table)
     {
@@ -103,9 +128,7 @@ class ORM
         $this->typeWhere = $type;
     }
 
-    // $orm->addWhereFields('id', 14);
-    public function addWhereFields($field, $value, $operator = '=', 
-        $type = PDO::PARAM_INT)
+    public function addWhereFields($field, $value, $operator = '=', $type = PDO::PARAM_INT)
     {
         $this->whereFieldsAndValues[] = [
             'field' => $field,
@@ -113,10 +136,24 @@ class ORM
             'operator' => $operator,
             'type' => $type
         ];
+    }
 
-        // execute : 
-        //    - prepare() à la place de query()
-        //    - faire les bindValue
+    public function addOrder($field, $direction = 'ASC')
+    {
+        $this->orderFieldsAndDirection[] = [
+            'field' => $field,
+            'direction' => $direction
+        ];
+    }
+
+    public function addInsertFields($field, $value, $type = PDO::PARAM_STR)
+    {
+        $this->insertFieldsAndValues[] = [
+            'field' => '`' . $field . '`', // Je stocke les valeurs comme
+            'bind' => ':' . $field, // j'en aurais besoin dans mon SQL
+            'value' => $value,
+            'type' => $type
+        ];
     }
 
     private function buildSelectSQL()
@@ -135,7 +172,43 @@ class ORM
         // WHERE
         $sql .= $this->handleWhere();
 
+        // ORDER
+        $sql .= $this->handleOrder();
+
         $this->sql = $sql;
+    }
+
+    private function buildInsertSQL()
+    {
+        // Requête de base, INSERT INTO `families` (`name`) VALUES ('RPG');
+        $sql = 'INSERT INTO ' . $this->table . ' ';
+
+        // Champs
+        $sql .= '(';
+        $sql .= implode(',', array_column($this->insertFieldsAndValues, 'field'));
+        $sql .= ')';
+
+        // Valeurs
+        $sql .= '(';
+        $sql .= ' VALUES ';
+        $sql .= implode(',', array_column($this->insertFieldsAndValues, 'bind'));
+        $sql .= ')';
+
+        $this->sql = $sql;
+    }
+
+    private function handleOrder()
+    {
+        if (empty($this->orderFieldsAndDirection)) {
+            return '';
+        }
+
+        $orders = [];
+        foreach ($this->orderFieldsAndDirection as $oFaD) {
+            $orders[] = $oFaD['field'] . ' ' . $oFaD['direction'];
+        }
+
+        return ' ORDER BY ' . implode(', ', $orders);
     }
 
     private function handleWhere()
@@ -171,8 +244,22 @@ class ORM
     // Méthodes d'accès rapides aux données
     public function getById($id)
     {
+        // Vérifier ce qu'il se passe ici ?
         $this->addWhereFields('id', $id);
         return $this->get('first');
+    }
+
+    // On vérifie que l'élément correspondant à $id existe
+    public function existInBDD($id)
+    {
+        $this->addWhereFields('id', $id);
+        $this->setSelectFields('id');
+
+        return $this->existInBDD = (bool) $this->get('count');
+
+        // Equivalent à
+        $this->existInBDD = (bool) $this->get('count');
+        return $this->existInBDD;
     }
 
     // Je "garnis" mon objet avec des propriétés qui correspondent 
@@ -180,10 +267,15 @@ class ORM
     // avec les valeurs associées à l'id
     public function populate($id)
     {
+        // Vérifie l'existence
+        if (!$this->existInBDD($id)) {
+            return false;
+        }
+
+        // On va chercher les données
         $model = $this->getById($id);
 
-        foreach ($model as $field => $value)
-        {
+        foreach ($model as $field => $value) {
             if (is_numeric($field)) {
                 continue;
             }
@@ -191,5 +283,12 @@ class ORM
             $this->$field = $value; // Attribution dynamique
             // PHP est permissif à ce niveau là et permet ça
         }
+
+        return true;
+    }
+
+    public function exist()
+    {
+        return $this->existInBDD;
     }
 }

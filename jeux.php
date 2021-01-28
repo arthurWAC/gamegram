@@ -25,21 +25,19 @@ echo $html->startMain();
 	<div class="col col-md-6">
 	<?php
 	// Connexion à ma base de données
-	$orm = new ORM();
+	$game = new Game();
 
-	// J'écris ma requête
-	$sql = 'SELECT id, name, year, note FROM games WHERE public = 1 ORDER BY name ASC';
-	$orm->setSQL($sql);
+	$listOfGames = $game->listOfPublicGames();
 	?>
-	<p class="lead text-center mb-5">Il y a actuellement <strong><?= $orm->get('count'); ?></strong> jeux dans la base de données</p>
-		<?php foreach ($orm->get('all') as $jeu): ?>
+	<p class="lead text-center mb-5">Il y a actuellement <strong><?= count($listOfGames); ?></strong> jeux dans la base de données</p>
+		<?php foreach ($listOfGames as $jeu): ?>
 
 		<div class="card mb-2">
 			<div class="card-body">
-			<span class="badge bg-success float-end"><?= $jeu['year']; ?></span>
-				<h5 class="card-title"><?= ucfirst($jeu['name'])?> </h5>
-				<p class="card-text">Note du public : <strong><?= $jeu['note'] ;?></strong>/10</p>
-				<?= $html->button('Voir le jeu', 'un_jeu.php?id=' . $jeu['id'], ['color' => SUCCESS, 'class' => 'btn-sm']); ?>
+			<span class="badge bg-success float-end"><?= $jeu->year; ?></span>
+				<h5 class="card-title"><?= ucfirst($jeu->name)?> </h5>
+				<p class="card-text">Note du public : <strong><?= $jeu->note ;?></strong>/10</p>
+				<?= $html->button('Voir le jeu', 'un_jeu.php?id=' . $jeu->id, ['color' => SUCCESS, 'class' => 'btn-sm']); ?>
 			</div>
 		</div>
 

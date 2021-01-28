@@ -73,7 +73,7 @@ class Bootstrap
 	
 	public function startMain()
 	{
-		return '<main class="container">' . 
+		return '<main class="container">' .
 			   $this->Alert->getAlertHTML();
 	}
 	

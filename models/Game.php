@@ -14,12 +14,27 @@ class Game extends ORM
             $this->populate($id);
         }
     }
+    
+    // Méhodes spécifiques à ce modèle
+    public function listOfPublicGames()
+    {
+        $this->setSelectFields('id', 'name', 'year', 'note');
+        $this->addWhereFields('public', 1);
+        $this->addOrder('name');
+        // $this->addOrder('', 'RAND()'); // ORDER BY RAND()
 
+        return $this->get('all');
+    }
+
+    // Méthode du coeur du système
     public function populate($id)
     {
-        parent::populate($id);
-        $this->Platform = new Platform($this->platform_id);
-        $this->Publisher = new Publisher($this->publisher_id);
-        $this->Family = new Family($this->family_id);
+        if (parent::populate($id)) {
+            // Si j'arrive à "garnir" Game, je peux alors "garnir"
+            // les modèles associés
+            $this->Platform = new Platform($this->platform_id);
+            $this->Publisher = new Publisher($this->publisher_id);
+            $this->Family = new Family($this->family_id);
+        }
     }
 }
