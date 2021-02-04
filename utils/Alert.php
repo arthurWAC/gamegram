@@ -14,6 +14,12 @@ class Alert
 		];
     }
 
+    // Méthode qui set une alert de formulaire en session
+    public function setAlertForm($field, $text)
+    {
+        $_SESSION[PROCESS_FORM_SESSION_HELP . $field] = $text;
+    }
+
     // Méthode qui redirige
     public function redirect($link)
     {

@@ -1,16 +1,19 @@
 <?php
 include('loader.php'); // Ma ligne de base sur chacun de mes fichiers
 
+// Sécurité sur le fait d'être déjà connecté
+if ($Auth->logged) {
+	$Alert->setAlert('Tu es déjà connecté !', ['color' => WARNING]);
+    $Alert->redirect('index.php');
+}
+
 $html = new Bootstrap('Inscription', 'Inscription '. NAME_APPLICATION .' !');
 
 // Début du DOM HTML
 echo $html->startDOM();
 
 // Menu
-$html->addMenu('Présentation', 'presentation.php');
-$html->addMenu('Jeux', 'jeux.php');
-$html->addMenu('Inscription', 'inscription.php');
-$html->setDisplayRecherche(false);
+include('elements/menu.php');
 
 echo $html->menu();
 
@@ -26,7 +29,7 @@ echo $html->startMain();
 	<div class="col col-sm-8 col-lg-4">
 	<?php
 	
-	$form = new BootstrapForm('Inscription', 'inscription.php', METHOD_POST);
+	$form = new BootstrapForm('Inscription', 'controllers.php', METHOD_POST);
 
 	$form->addInput('username',	TYPE_EMAIL, 	['label' => 'Adresse mail', 'placeholder' => 'Pour spammer ta boite mail chaque jour']);
 	$form->addInput('password', TYPE_PASSWORD, 	['label' => 'Mot de passe', 'placeholder' => '8 caractères minimum']);
@@ -37,6 +40,9 @@ echo $html->startMain();
 	
 	echo $form->form();
 	?>
+    <hr />
+    <p class="lead text-center">Déjà inscrit ?</p>
+    <p class="text-center"><?= $html->button('Connexion', 'connexion.php', ['color' => WARNING]); ?></p>
 	</div>
 </div>
 <?php

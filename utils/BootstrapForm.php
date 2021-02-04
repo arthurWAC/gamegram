@@ -84,15 +84,43 @@ class BootstrapForm
 			$this->handleHtmlAttributs($options, 'placeholder');
 		}
 		
-		// et value, pour tout le monde
-		$this->handleHtmlAttributs($options, 'value');
+		// et value, pour tout le monde, sauf password
+		if ($type !== TYPE_PASSWORD) {
+			$this->handleValue($name, $options);
+		}
 		
 		// Construction de mon <input ... />
 		$input .= '<input type="'. $type .'" class="'. FORM_CONTROL .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'/>';
-	
+		
+		$input .= $this->handleHelpAlert($name);
+
 		$input .= '</div>';
 		
 		return $input;
+	}
+
+	private function handleHelpAlert($name)
+	{
+		if (!isset($_SESSION[PROCESS_FORM_SESSION_HELP . $name])) {
+			return '';
+		}
+
+		$help = $_SESSION[PROCESS_FORM_SESSION_HELP . $name];
+		unset($_SESSION[PROCESS_FORM_SESSION_HELP . $name]);
+
+		return '<div class="form-text badge bg-danger">' .
+				$help .
+				'</div>';
+	}
+
+	private function handleValue($name, $options)
+	{
+		if (isset($_SESSION[PROCESS_FORM_SESSION . $name])) {
+			$this->htmlAttributs .= 'value="'. $_SESSION[PROCESS_FORM_SESSION . $name] .'" ';
+			unset($_SESSION[PROCESS_FORM_SESSION . $name]);
+		} else {
+			$this->handleHtmlAttributs($options, 'value');
+		}
 	}
 
 	private function handleHtmlAttributs($options, $field)

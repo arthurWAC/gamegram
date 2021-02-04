@@ -113,6 +113,41 @@ class ORM
         }
     }
 
+    public function insert()
+    {
+        // On construit la requête
+        $this->buildInsertSQL();
+
+        $this->query = $this->connexion->prepare($this->sql);
+
+        // bindValue
+        // Pas besoin de tester if (!empty())
+        foreach ($this->insertFieldsAndValues as $iFaV) {
+            $this->query->bindValue(
+                $iFaV['bind'],
+                $iFaV['value'],
+                $iFaV['type']
+            );
+        }
+
+        if (!$this->query->execute()) {
+            // Erreur requête ?
+            die('Erreur [ORM 003] : ' . $this->query->errorInfo()[2]);
+        }
+        // On remet "à zéro" les propriétés qui permettent de créer la requête SQL
+        $this->resetPropertiesSQL();
+        
+       return $this->getLastId();
+    }
+
+    // On va chercher le dernier ID ajouté dans la table
+    public function getLastId()
+    {
+        $this->addOrder('id', 'DESC');
+        $this->setSelectFields('id');
+        return $this->get('first')['id'];
+    }
+
     public function setTable($table)
     {
         $this->table = $table;
@@ -189,8 +224,8 @@ class ORM
         $sql .= ')';
 
         // Valeurs
-        $sql .= '(';
         $sql .= ' VALUES ';
+        $sql .= '(';
         $sql .= implode(',', array_column($this->insertFieldsAndValues, 'bind'));
         $sql .= ')';
 

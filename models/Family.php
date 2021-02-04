@@ -14,10 +14,7 @@ class Family extends ORM
     public function create($name)
     {
         $this->addInsertFields('name', $name, PDO::PARAM_STR);
-        // Pas $this->get('...');
-        // TODO : faire la fonction insert
-        // TODO : retourne le nouvel id créé
-        $newId = $this->insert(); // Regarder du côte de "pdo.exec"
+        $newId = $this->insert();
         $this->populate($newId);
     }
 }

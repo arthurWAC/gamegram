@@ -7,10 +7,7 @@ $html = new Bootstrap('Présentation', 'Présentation de '. NAME_APPLICATION .' 
 echo $html->startDOM();
 
 // Menu
-$html->addMenu('Présentation', 'presentation.php');
-$html->addMenu('Jeux', 'jeux.php');
-$html->addMenu('Inscription', 'inscription.php');
-$html->setDisplayRecherche(false);
+include('elements/menu.php');
 
 echo $html->menu();
 
