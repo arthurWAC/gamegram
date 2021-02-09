@@ -22,7 +22,10 @@ class Validator
         // Nettoyage des données
         foreach ($data as $key => $value) {
             // Je nettoie ma donnée
-            $cleanValue = htmlentities($value);
+
+            // Faire d'abord un strip_tags
+            $cleanValue = strip_tags($value, '<p><b><i><br><strong>');
+            $cleanValue = htmlentities($cleanValue);
 
             // Je vais mettre ma donnée en session, si je suis dans un process de formulaire
             if ($this->typeProcess == PROCESS_FORM) {

@@ -26,11 +26,18 @@ class Post extends ORM
         $this->populate($newId);
     }
 
-    public function lastPosts()
+    public function lastPostsWithGameAndUser()
     {
         $this->addOrder('created', 'DESC');
-        // $this->addLimit(20);
-        return $this->get('all');
+        $this->setSelectFields('id');
+        $posts = $this->get('all');
+
+        $postsComplete = [];
+        foreach ($posts as $post) {
+            $postsComplete[] = new Post($post->id);
+        }
+
+        return $postsComplete;
     }
 
     public function populate($id)
