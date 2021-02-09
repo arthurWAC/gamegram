@@ -21,7 +21,19 @@ echo $html->startMain();
 ?>
 <div class="starter-template text-center mt-5 px-3">
 	<h1>Derniers posts</h1>
+	<p class="text-center"><?= $html->button('+ Nouveau Post', 'new_post.php', ['color' => SUCCESS]); ?></p>
 </div>
+
+<?php
+
+$post = new Post();
+$posts = $post->lastPosts();
+
+echo '<pre>';
+print_r($posts);
+echo '</pre>';
+?>
+
 
 <?php
 echo $html->endMain();

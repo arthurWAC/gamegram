@@ -60,6 +60,9 @@ class ORM
 
         // Pour mon ORDER
         $this->orderFieldsAndDirection = [];
+
+        // Pour ma requête INSERT
+        $this->insertFieldsAndValues = [];
     }
 
     // Doit me permettre d'executer des requêtes

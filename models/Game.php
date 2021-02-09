@@ -26,6 +26,18 @@ class Game extends ORM
         return $this->get('all');
     }
 
+    public function publicGamesById()
+    {
+        $publicGames = $this->listOfPublicGames();
+        $gamesById = [];
+
+        foreach ($publicGames as $game) {
+            $gamesById[$game->id] = $game->name;
+        }
+
+        return $gamesById;
+    }
+
     // Méthode du coeur du système
     public function populate($id)
     {

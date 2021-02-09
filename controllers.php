@@ -87,3 +87,31 @@ if (isset($_GET['action']) && $_GET['action'] == 'logout') {
     $Alert->setAlert('Déconnexion OK', ['color' => SUCCESS]);
     $Alert->redirect('index.php');
 }
+
+// Nouveau Post
+if (isset($_POST['nouveau_post'])) {
+
+    $validator = new Validator($_POST, 'new_post.php');
+
+    // Le title n'est pas vide
+    $validator->validateLength('title', 10);
+
+    // Le contenu n'est pas vide
+    $validator->validateLength('content', 30);
+
+    // Un jeu a bien été choisi
+    $validator->validateNumeric('game_id');
+
+    $data = $validator->getData();
+
+    $post = new Post();
+    $post->create(
+        $Auth->User->id, // Accès direct ici au User.id
+        $data['game_id'],
+        $data['title'],
+        $data['content']
+    );
+
+    $Alert->setAlert('Post créé avec succès !', ['color' => SUCCESS]);
+    $Alert->redirect('feed.php');
+}

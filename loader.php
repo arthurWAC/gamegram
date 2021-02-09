@@ -2,6 +2,9 @@
 // Démarrage de la session, pour utiliser $_SESSION
 session_start();
 
+// Composer
+// require('vendor/autoload.php');
+
 // Constantes
 require('constantes.php');
 
@@ -14,6 +17,7 @@ require(DIR_MODELS . 'Platform.php');
 require(DIR_MODELS . 'Publisher.php');
 require(DIR_MODELS . 'Family.php');
 require(DIR_MODELS . 'User.php');
+require(DIR_MODELS . 'Post.php');
 
 // Utils
 require(DIR_UTILS . 'Bootstrap.php');

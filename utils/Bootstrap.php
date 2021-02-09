@@ -52,10 +52,8 @@ class Bootstrap
     <title>'. NAME_APPLICATION .' - '. $this->title .'</title>
     <meta name="description" content="'. $this->description .'">
 
-    <!-- Bootstrap core CSS -->
 	<link href="'. DIR_ASSETS . DIR_CSS .'bootstrap.css" rel="stylesheet">
-    
-    <!-- Custom styles for this template -->
+	<link href="'. DIR_ASSETS . DIR_CSS .'select2.css" rel="stylesheet">
     <link href="'. DIR_ASSETS . DIR_CSS .'theme.css" rel="stylesheet">
   </head>
   <body>';
@@ -63,10 +61,11 @@ class Bootstrap
 	
 	public function endDom()
 	{
-		return '<!-- Javascript -->
-    <script src="'. DIR_ASSETS . DIR_JS .'bootstrap.js"></script>
-    <script src="'. DIR_ASSETS . DIR_JS .'main.js"></script>
-
+		return '
+		<script src="'. DIR_ASSETS . DIR_JS .'jquery.js"></script>
+		<script src="'. DIR_ASSETS . DIR_JS .'bootstrap.js"></script>
+		<script src="'. DIR_ASSETS . DIR_JS .'select2.js"></script>
+    	<script src="'. DIR_ASSETS . DIR_JS .'main.js"></script>
   </body>
 </html>';
 	}

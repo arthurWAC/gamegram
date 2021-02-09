@@ -8,9 +8,12 @@ define('TYPE_PASSWORD', 'password'); // Champ mot de passe
 define('TYPE_NUMBER', 'number'); // Champ numérique
 define('TYPE_EMAIL', 'email'); // Champ mail
 define('TYPE_HIDDEN', 'hidden'); // Champ caché
-define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN, TYPE_EMAIL]);
+define('TYPE_SELECT', 'select'); // select
+define('TYPE_TEXTAREA', 'textarea'); // textarea
+define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN, TYPE_EMAIL, TYPE_SELECT, TYPE_TEXTAREA]);
 
 define('FORM_CONTROL', 'form-control');
+define('FORM_SELECT', 'form-select');
 define('FORM_LABEL', 'form-label');
 
 class BootstrapForm
@@ -47,8 +50,6 @@ class BootstrapForm
 			die('Erreur fatale [BF 002] mauvaise configuration du champ ' . $name);
 		}
 		
-		// $form->addInput('username', TYPE_TEXT);
-		// $form->addInput('password', TYPE_PASSWORD);
 		$this->inputs[] = [
 			'name' => $name,
 			'type' => $type,
@@ -84,14 +85,67 @@ class BootstrapForm
 			$this->handleHtmlAttributs($options, 'placeholder');
 		}
 		
-		// et value, pour tout le monde, sauf password
-		if ($type !== TYPE_PASSWORD) {
-			$this->handleValue($name, $options);
+		
+		
+		// Construction de mon <input ... /> ou <select ...> ou <texarea ...>
+		switch ($type) {
+
+			case TYPE_SELECT:
+
+				$class = FORM_SELECT;
+
+				if (isset($options['class'])) {
+					$class .= ' ' . $options['class'];
+				}
+
+				$input .= '<select class="'. $class .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'>';
+
+				if (!isset($options['data'])) {
+					die('Erreur fatale [BF 003] data manquante pour le select ' . $name);
+				}
+
+				foreach ($options['data'] as $value => $name) {
+
+					$selected = '';
+					if (isset($options['value']) && $options['value'] == $value) {
+						$selected = 'selected';
+					}
+
+					$input .= '<option value="'. $value .'" '. $selected .'>' . $name . '</option>';
+				}
+
+				$input .= '</select>';
+			break;
+
+			case TYPE_TEXTAREA:
+
+				$class = FORM_CONTROL;
+
+				if (isset($options['class'])) {
+					$class .= ' ' . $options['class'];
+				}
+
+				$rows = $options['rows'] ?? 5;
+
+				$input .= '<textarea class="'. $class .'" rows="'. $rows .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'>';
+
+				if (isset($options['value'])) {
+					$input .= $value;
+				}
+
+				$input .= '</textarea>';
+			break;
+
+			default:
+				// et value, pour tout le monde, sauf password
+				if ($type !== TYPE_PASSWORD) {
+					$this->handleValue($name, $options);
+				}
+
+				$input .= '<input type="'. $type .'" class="'. FORM_CONTROL .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'/>';
+			break;
 		}
-		
-		// Construction de mon <input ... />
-		$input .= '<input type="'. $type .'" class="'. FORM_CONTROL .'" id="'. $id .'" name="'. $this->slug($name) .'" '. $this->htmlAttributs .'/>';
-		
+
 		$input .= $this->handleHelpAlert($name);
 
 		$input .= '</div>';
