@@ -1,6 +1,8 @@
 <?php
 class Comment extends ORM
 {
+	public $User;
+
     public function __construct($id = null)
     {
         parent::__construct();
@@ -20,5 +22,28 @@ class Comment extends ORM
         
         $newId = $this->insert();
         $this->populate($newId);
+    }
+
+	public function commentsFromPost($postId)
+    {
+    	$this->addWhereFields('post_id', $postId, '=', PDO::PARAM_INT);
+    	$this->setSelectFields('id');
+    	$this->addOrder('created', 'ASC');
+    	$comments = $this->get('all');
+
+    	$commentsComplete = [];
+
+    	foreach ($comments as $comment) {
+    		$commentsComplete[] = new Comment($comment->id);
+    	}
+
+    	return $commentsComplete;
+    }
+
+    public function populate($id)
+    {
+        if (parent::populate($id)) {
+            $this->User = new User($this->user_id);
+        }
     }
 }

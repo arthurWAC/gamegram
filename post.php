@@ -40,7 +40,22 @@ echo $html->startMain();
 	<div class="col col-sm-6">
 		<p class="card-text"><?= $html->toHtml($post->content) ;?></p>
 		<br /><hr />
-		<h4>Commentaire(s)</h4>
+		<h4 class="mb-3">Commentaire(s)</h4>
+		<?php
+		$comment = new Comment();
+
+		$comments = $comment->commentsFromPost($post->id);
+		foreach ($comments as $comment):
+		?>
+		<div class="card mb-3">
+			<div class="card-header small">
+				Le <?= date('d/m/Y', strtotime($comment->created)); ?> par <?= $comment->User->pseudo; ?>
+			</div>
+			<div class="card-body small">
+				<p><?= $comment->content ;?></p>
+			</div>
+		</div>
+		<?php endforeach; ?>
 
 		<br /><hr />
 		<h4>Laisse un commentaire !</h4>
@@ -48,7 +63,7 @@ echo $html->startMain();
 		$form = new BootstrapForm('Nouveau Commentaire', 'controllers.php', METHOD_POST);
 
 	    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
-	    $form->addInput('content', 	TYPE_TEXTAREA, 	['label' => 'Contenu', 'rows' => 8, 'class' => 'summernote']);
+	    $form->addInput('content', 	TYPE_TEXTAREA, 	['label' => 'Ton commentaire', 'rows' => 8, 'class' => 'summernote']);
 		
 		$form->setSubmit('Je commente', ['color' => SUCCESS]);
 		
@@ -63,6 +78,12 @@ echo $html->startMain();
 				<span class="badge bg-success"><?= $post->Game->Family->name; ?></span> - <span class="badge bg-success"><?= $post->Game->Platform->name; ?></span>
 			</div>
 		</div>
+
+		<br />
+
+		<p class="text-center">
+			<?= $html->button('&larr; Retour au feed', 'feed.php', ['color' => LIGHT]); ?>
+		</p>
 	</div>
 </div>
 <?php
