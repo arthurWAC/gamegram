@@ -103,6 +103,24 @@ class Validator
         }
     }
 
+    public function validateExist($field, $tableAndField, $typePDO = PDO::PARAM_INT)
+    {
+        if (!isset($this->data[$field])) {
+            die('Erreur [Val 005] Champ '. $field .' inconnu');
+        }
+
+        // "Multi attribution"
+        [$table, $tableField] = explode('.', $tableAndField);
+
+        // Travail avec l'ORM
+        $this->Orm->setTable($table);
+        $this->Orm->addWhereFields($tableField, $this->data[$field], '=', $typePDO);
+
+        if ($this->Orm->get('count') == 0) {
+           $this->alert($field, $this->data[$field] . ' n\'existe pas');
+        }
+    }
+
     public function validatePassword($field, $length)
     {
         // Longueur

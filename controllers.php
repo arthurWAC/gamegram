@@ -115,3 +115,30 @@ if (isset($_POST['nouveau_post'])) {
     $Alert->setAlert('Post créé avec succès !', ['color' => SUCCESS]);
     $Alert->redirect('feed.php');
 }
+
+// Nouveau commentaire
+if (isset($_POST['nouveau_commentaire'])) {
+
+    $validator = new Validator($_POST, 'post.php?id=' . $_POST['post_id']);
+
+    // Un post a bien été choisi
+    $validator->validateNumeric('post_id');
+
+    // Le post choisi existe
+    $validator->validateExist('post_id', 'posts.id');
+
+    // Le contenu n'est pas vide
+    $validator->validateLength('content', 5);
+
+    $data = $validator->getData();
+
+    $comment = new Comment();
+    $comment->create(
+        $Auth->User->id, // Accès direct ici au User.id
+        $data['post_id'],
+        $data['content']
+    );
+
+    $Alert->setAlert('Commentaire créé avec succès !', ['color' => SUCCESS]);
+    $Alert->redirect('post.php?id=' . $data['post_id']);
+}
