@@ -173,8 +173,12 @@ class Bootstrap
 		$alert = new BootstrapAlert($text, $options);
 		return $alert->alert();
 	}
-	
 
+	// Met en forme le texte HTML
+	public function toHtml($txt)
+	{
+		return nl2br(html_entity_decode($txt));
+	}
 	
 	// Getteurs / Setteurs - public par défaut
 	public function setDisplayRecherche($mode)

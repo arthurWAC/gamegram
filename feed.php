@@ -39,7 +39,7 @@ echo $html->startMain();
 			<div class="row">
 				<div class="col col-sm-8">
 		    		<h5 class="card-title"><?= $post->title; ?></h5>
-		    		<p class="card-text"><?= nl2br(html_entity_decode($post->content)) ;?></p>
+		    		<p class="card-text"><?= $html->toHtml($post->content) ;?></p>
 		    	</div>
 				<div class="col col-sm-4">
 					<div class="card">

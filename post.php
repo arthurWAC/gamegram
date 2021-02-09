@@ -38,7 +38,7 @@ echo $html->startMain();
 
 <div class="row justify-content-center mt-5">
 	<div class="col col-sm-6">
-		<p class="card-text"><?= nl2br(html_entity_decode($post->content)) ;?></p>
+		<p class="card-text"><?= $html->toHtml($post->content) ;?></p>
 		<br /><hr />
 		<h4>Commentaire(s)</h4>
 
