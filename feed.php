@@ -46,6 +46,12 @@ echo $html->startMain();
 				// Like ou pas
 				if ($post->liked) {
 					// Post liké, bouton "unlike"
+					$form = new BootstrapForm('Unlike', 'controllers.php', METHOD_POST);
+
+				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
+					$form->setSubmit('Unlike', ['color' => WARNING, 'class' => 'btn-sm float-end']);
+					
+					echo $form->form();
 				} else {
 					// Post non liké, bouton "like"
 					$form = new BootstrapForm('Nouveau Like', 'controllers.php', METHOD_POST);

@@ -159,10 +159,28 @@ if (isset($_POST['nouveau_like'])) {
     }
 
     $like->create(
-        $Auth->User->id, // Accès direct ici au User.id
         $data['post_id'],
+        $Auth->User->id, // Accès direct ici au User.id
     );
 
     $Alert->setAlert('Post liké', ['color' => SUCCESS]);
+    $Alert->redirect('feed.php#post_' . $data['post_id']);
+}
+
+
+// Unlike
+if (isset($_POST['unlike'])) {
+    $validator = new Validator($_POST, 'feed.php');
+        $validator->validateNumeric('post_id');
+
+    $data = $validator->getData();
+    $like = new Like();
+
+    $like->unlike(
+        $data['post_id'],
+        $Auth->User->id, // Accès direct ici au User.id
+    );
+
+    $Alert->setAlert('Post Unliké', ['color' => SUCCESS]);
     $Alert->redirect('feed.php#post_' . $data['post_id']);
 }

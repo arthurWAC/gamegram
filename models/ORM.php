@@ -78,7 +78,6 @@ class ORM
         $this->query = $this->connexion->prepare($this->sql);
 
         // bindValue
-        // Pas besoin de tester if (!empty())
         foreach ($this->whereFieldsAndValues as $wFaV) {
             $this->query->bindValue(
                 ':' . $wFaV['binder'],
@@ -145,6 +144,31 @@ class ORM
         $this->resetPropertiesSQL();
         
        return $this->getLastId();
+    }
+
+    public function delete()
+    {
+        // On construit la requête
+        $this->buildDeleteSQL();
+
+        $this->query = $this->connexion->prepare($this->sql);
+
+        // bindValue
+        foreach ($this->whereFieldsAndValues as $wFaV) {
+            $this->query->bindValue(
+                ':' . $wFaV['binder'],
+                $wFaV['value'],
+                $wFaV['type']
+            );
+        }
+
+        if (!$this->query->execute()) {
+            // Erreur requête ?
+            die('Erreur [ORM 004] : ' . $this->query->errorInfo()[2]);
+        }
+        
+        // On remet "à zéro" les propriétés qui permettent de créer la requête SQL
+        $this->resetPropertiesSQL(); 
     }
 
     // On va chercher le dernier ID ajouté dans la table
@@ -247,6 +271,20 @@ class ORM
         $sql .= '(';
         $sql .= implode(',', array_column($this->insertFieldsAndValues, 'bind'));
         $sql .= ')';
+
+        $this->sql = $sql;
+    }
+
+    private function buildDeleteSQL()
+    {
+        $sql = 'DELETE FROM ' . $this->table . ' ';
+
+        // Sécurité
+        if (empty($this->whereFieldsAndValues)) {
+            die('Erreur [ORM 005] : Il faut obligatoirement renseigner des conditions pour un DELETE');
+        }
+
+        $sql .= $this->handleWhere();
 
         $this->sql = $sql;
     }

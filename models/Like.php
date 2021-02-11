@@ -11,7 +11,7 @@ class Like extends ORM
         }
     }
 
-    public function create($userId, $postId)
+    public function create($postId, $userId)
     {
         $this->addInsertFields('user_id', $userId, PDO::PARAM_INT);
         $this->addInsertFields('post_id', $postId, PDO::PARAM_INT);
@@ -31,5 +31,12 @@ class Like extends ORM
         $this->addWhereFields('post_id', $postId, '=', PDO::PARAM_INT);
         $this->addWhereFields('user_id', $userId, '=', PDO::PARAM_INT);
         return (bool) $this->get('count');
+    }
+
+    public function unlike($postId, $userId)
+    {
+        $this->addWhereFields('post_id', $postId, '=', PDO::PARAM_INT);
+        $this->addWhereFields('user_id', $userId, '=', PDO::PARAM_INT);
+        $this->delete();
     }
 }
