@@ -30,13 +30,35 @@ echo $html->startMain();
 	$post = new Post();
 	$posts = $post->lastPostsWithGameAndUser();
 	foreach ($posts as $post): ?>
-	<div class="card mb-5">
+	<div class="card mb-5" id="post_<?= $post->id; ?>">
 		<div class="card-header">
-			<span style="float: right;">
-				<?= $post->nbLikes; ?> 
-				<img src="assets/img/icons/Rating.svg" style="height: 24px;" />
-			</span>
-			Le <?= date('d/m/Y', strtotime($post->created)); ?> par <?= $post->User->pseudo; ?>
+
+			<div class="row">
+				<div class="col-8">
+					Le <?= date('d/m/Y', strtotime($post->created)); ?> par <?= $post->User->pseudo; ?>
+				</div>
+				<div class="col-2">
+					<?= $post->nbLikes; ?> 
+					<img src="assets/img/icons/Rating.svg" style="height: 24px;" />
+				</div>
+				<div class="col-2">
+				<?php
+				// Like ou pas
+				if ($post->liked) {
+					// Post liké, bouton "unlike"
+				} else {
+					// Post non liké, bouton "like"
+					$form = new BootstrapForm('Nouveau Like', 'controllers.php', METHOD_POST);
+
+				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
+					$form->setSubmit('Like', ['color' => SUCCESS, 'class' => 'btn-sm float-end']);
+					
+					echo $form->form();
+				}
+				?>
+				</div>
+			</div>
+			
 		</div>
 		<div class="card-body">
 			<div class="row">
@@ -75,7 +97,7 @@ echo $html->startMain();
 			if ($post->nbComments > 2) {
 				echo '<p>' . ($post->nbComments - 2) . ' autre(s) commentaire(s).</p>';
 			}
-			
+
 			?>
 			</div>
 		</div>

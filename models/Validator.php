@@ -194,8 +194,6 @@ class Validator
             $this->Alert->redirect($this->urlError);
         }
 
-        // TODO : Nettoyage de $_SESSION
-
         return $this->data;
     }
 }

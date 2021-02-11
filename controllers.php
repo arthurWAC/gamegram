@@ -142,3 +142,27 @@ if (isset($_POST['nouveau_commentaire'])) {
     $Alert->setAlert('Commentaire créé avec succès !', ['color' => SUCCESS]);
     $Alert->redirect('post.php?id=' . $data['post_id']);
 }
+
+// Nouveau like
+if (isset($_POST['nouveau_like'])) {
+    $validator = new Validator($_POST, 'feed.php');
+        $validator->validateNumeric('post_id');
+        $validator->validateExist('post_id', 'posts.id');
+
+    $data = $validator->getData();
+    $like = new Like();
+
+    // Rajouté un controle sur le fait que le post soit déjà liké ?
+    if ($like->alreadyLike($data['post_id'], $Auth->User->id)) {
+        $Alert->setAlert('Ce Post est déjà liké', ['color' => DANGER]);
+        $Alert->redirect('feed.php#post_' . $data['post_id']);
+    }
+
+    $like->create(
+        $Auth->User->id, // Accès direct ici au User.id
+        $data['post_id'],
+    );
+
+    $Alert->setAlert('Post liké', ['color' => SUCCESS]);
+    $Alert->redirect('feed.php#post_' . $data['post_id']);
+}

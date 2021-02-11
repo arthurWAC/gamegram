@@ -169,11 +169,12 @@ class BootstrapForm
 
 	private function handleValue($name, $options)
 	{
-		if (isset($_SESSION[PROCESS_FORM_SESSION . $name])) {
+		if (isset($options['value'])) {
+			// On privilégie la value passée dans le formulaire VS une value présente en session
+			$this->handleHtmlAttributs($options, 'value');
+		} elseif (isset($_SESSION[PROCESS_FORM_SESSION . $name])) {
 			$this->htmlAttributs .= 'value="'. $_SESSION[PROCESS_FORM_SESSION . $name] .'" ';
 			unset($_SESSION[PROCESS_FORM_SESSION . $name]);
-		} else {
-			$this->handleHtmlAttributs($options, 'value');
 		}
 	}
 
@@ -186,7 +187,6 @@ class BootstrapForm
 	
 	public function setSubmit($name, $options = [])
 	{
-		// $form->setSubmit('Je m\'inscris', ['color' => SUCCESS]);
 		$this->submit = [
 			'name' => $name,
 			'options' => $options
@@ -197,8 +197,14 @@ class BootstrapForm
 	private function submit()
 	{
 		$color = $this->submit['options']['color'] ?? PRIMARY;
+
+		// Class par défaut
+		$class = BTN . ' ' . BTN . '-' . $color . ' ';
 		
-		return '<button type="submit" class="'. BTN . ' ' . BTN . '-' . $color .'">'. $this->submit['name'] .'</button>';
+		// Classes supplémentaires
+		$class .= $this->submit['options']['class'] ?? '';
+		
+		return '<button type="submit" class="'. $class .'">'. $this->submit['name'] .'</button>';
 	}
 	
 	// Construction HTML complète de mon formulaire
