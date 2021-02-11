@@ -61,6 +61,10 @@ class ORM
         // Pour mon ORDER
         $this->orderFieldsAndDirection = [];
 
+        // Pour mon LIMIT
+        $this->limitCount = null;
+        $this->limitOffset = null;
+
         // Pour ma requête INSERT
         $this->insertFieldsAndValues = [];
     }
