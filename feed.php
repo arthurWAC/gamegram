@@ -32,7 +32,10 @@ echo $html->startMain();
 	foreach ($posts as $post): ?>
 	<div class="card mb-5">
 		<div class="card-header">
-			<img src="assets/img/icons/Rating.svg" style="float: right; height: 24px;" />
+			<span style="float: right;">
+				<?= $post->nbLikes; ?> 
+				<img src="assets/img/icons/Rating.svg" style="height: 24px;" />
+			</span>
 			Le <?= date('d/m/Y', strtotime($post->created)); ?> par <?= $post->User->pseudo; ?>
 		</div>
 		<div class="card-body">
@@ -52,7 +55,21 @@ echo $html->startMain();
 				</div>
 		    </div>
 	    </div>
-	    <div class="card-footer mt-5">
+
+	    <div class="card mx-3">
+			<div class="card-header">
+				<h6 class="card-title">Commentaire(s)</h6>
+			</div>
+			<div class="card-body">
+		    <?php
+		    foreach ($post->Comments as $comment):
+			?>
+			<p><b><?= $comment->User->pseudo; ?></b> : <?= $comment->content ;?></p>
+			<?php endforeach; ?>
+			</div>
+		</div>
+
+	    <div class="card-footer mt-3">
 	    	<?= $html->button('Voir le post', 'post.php?id=' . $post->id, ['color' => SUCCESS, 'class' => 'btn-sm']); ?>
 	    </div>
 	</div>

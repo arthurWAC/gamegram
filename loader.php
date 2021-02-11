@@ -19,6 +19,7 @@ require(DIR_MODELS . 'Family.php');
 require(DIR_MODELS . 'User.php');
 require(DIR_MODELS . 'Post.php');
 require(DIR_MODELS . 'Comment.php');
+require(DIR_MODELS . 'Like.php');
 
 // Utils
 require(DIR_UTILS . 'Bootstrap.php');

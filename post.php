@@ -14,6 +14,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $post = new Post($_GET['id']);
+$post->loadComments(10);
 
 if (!$post->exist()) {
 	$Alert->setAlert('Ce Post n\'existe pas');
@@ -39,23 +40,23 @@ echo $html->startMain();
 <div class="row justify-content-center mt-5">
 	<div class="col col-sm-6">
 		<p class="card-text"><?= $html->toHtml($post->content) ;?></p>
-		<br /><hr />
-		<h4 class="mb-3">Commentaire(s)</h4>
-		<?php
-		$comment = new Comment();
 
-		$comments = $comment->commentsFromPost($post->id);
-		foreach ($comments as $comment):
-		?>
-		<div class="card mb-3">
-			<div class="card-header small">
-				Le <?= date('d/m/Y', strtotime($comment->created)); ?> par <?= $comment->User->pseudo; ?>
+		<?php if ($post->nbComments != 0): ?>
+			<br /><hr />
+			<h4 class="mb-3"><?= $post->nbComments; ?> Commentaire(s)</h4>
+			<?php
+			foreach ($post->Comments as $comment):
+			?>
+			<div class="card mb-3">
+				<div class="card-header small">
+					Le <?= date('d/m/Y', strtotime($comment->created)); ?> par <?= $comment->User->pseudo; ?>
+				</div>
+				<div class="card-body small">
+					<p><?= $comment->content ;?></p>
+				</div>
 			</div>
-			<div class="card-body small">
-				<p><?= $comment->content ;?></p>
-			</div>
-		</div>
-		<?php endforeach; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 
 		<br /><hr />
 		<h4>Laisse un commentaire !</h4>

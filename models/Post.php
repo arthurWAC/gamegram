@@ -4,6 +4,11 @@ class Post extends ORM
     public $Game;
     public $User;
 
+    public $Comments;
+    public $nbComments;
+
+    public $nbLikes;
+
     public function __construct($id = null)
     {
         parent::__construct();
@@ -41,11 +46,28 @@ class Post extends ORM
         return $postsComplete;
     }
 
+    public function loadComments($nbComments)
+    {
+        $comment = new Comment;
+        $this->Comments = $comment->commentsFromPost($this->id, $nbComments);
+    }
+
     public function populate($id)
     {
         if (parent::populate($id)) {
+
+            // Modèles associés
             $this->Game = new Game($this->game_id);
             $this->User = new User($this->user_id);
+
+            // 2 premiers commentaires
+            $comment = new Comment;
+            $this->Comments = $comment->commentsFromPost($id, 2);
+            $this->nbComments = $comment->nbCommentsOfPost($id);
+
+            // Champs virtuel : Compteur de like
+            $like = new Like;
+            $this->nbLikes = $like->nbLikesOfPost($id);                
         }
     }
 }
