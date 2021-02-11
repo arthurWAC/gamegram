@@ -41,6 +41,12 @@ class Comment extends ORM
     	return $commentsComplete;
     }
 
+    public function nbCommentsOfPost($postId)
+    {
+    	$this->addWhereFields('post_id', $postId, '=', PDO::PARAM_INT);
+        return $this->get('count');
+    }
+
     public function populate($id)
     {
         if (parent::populate($id)) {
