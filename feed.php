@@ -62,10 +62,21 @@ echo $html->startMain();
 			</div>
 			<div class="card-body">
 		    <?php
+
+		    if ($post->nbComments == 0) {
+		    	echo '<p>Pas encore de commentaire.</p>';
+		    }
+
 		    foreach ($post->Comments as $comment):
 			?>
 			<p><b><?= $comment->User->pseudo; ?></b> : <?= $comment->content ;?></p>
-			<?php endforeach; ?>
+			<?php endforeach; 
+
+			if ($post->nbComments > 2) {
+				echo '<p>' . ($post->nbComments - 2) . ' autre(s) commentaire(s).</p>';
+			}
+			
+			?>
 			</div>
 		</div>
 
