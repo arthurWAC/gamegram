@@ -26,12 +26,12 @@ class ORM
     // Pour le ORDER
     private $orderFieldsAndDirection;
 
+    // Pour le LIMIT
+    private $limitCount;
+    private $limitOffset;
+
     // Pour le INSERT
     private $insertFieldsAndValues;
-        // Ex. dans Family.php
-        // $this->addInsertFields('name', $name, PDO::PARAM_STR);
-        // Pas $this->get('...');
-        // $this->launch(); // Regarder du côte de "exec"
 
     // Permet de savoir si une entrée donnée existe
     private $existInBDD = false; 
@@ -184,6 +184,15 @@ class ORM
         ];
     }
 
+    public function setLimit($count, $offset = null)
+    {
+        $this->limitCount = $count;
+
+        if ($offset !== null) {
+            $this->limitOffset = $offset;
+        }
+    }
+
     public function addInsertFields($field, $value, $type = PDO::PARAM_STR)
     {
         $this->insertFieldsAndValues[] = [
@@ -212,6 +221,9 @@ class ORM
 
         // ORDER
         $sql .= $this->handleOrder();
+
+        // LIMIT
+        $sql .= $this->handleLimit();
 
         $this->sql = $sql;
     }
@@ -247,6 +259,23 @@ class ORM
         }
 
         return ' ORDER BY ' . implode(', ', $orders);
+    }
+
+    private function handleLimit()
+    {
+        if (empty($this->limitCount)) {
+            return '';
+        }
+
+        $limit = ' LIMIT ';
+
+        if ($this->limitOffset !== null) {
+            $limit .= $this->limitOffset . ',';
+        }
+
+        $limit .= $this->limitCount;
+
+        return $limit;
     }
 
     private function handleWhere()

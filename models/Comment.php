@@ -24,11 +24,12 @@ class Comment extends ORM
         $this->populate($newId);
     }
 
-	public function commentsFromPost($postId)
+	public function commentsFromPost($postId, $limit = 2)
     {
     	$this->addWhereFields('post_id', $postId, '=', PDO::PARAM_INT);
     	$this->setSelectFields('id');
     	$this->addOrder('created', 'ASC');
+    	$this->setLimit($limit);
     	$comments = $this->get('all');
 
     	$commentsComplete = [];

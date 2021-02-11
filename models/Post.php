@@ -30,6 +30,7 @@ class Post extends ORM
     {
         $this->addOrder('created', 'DESC');
         $this->setSelectFields('id');
+        $this->setLimit(5);
         $posts = $this->get('all');
 
         $postsComplete = [];
