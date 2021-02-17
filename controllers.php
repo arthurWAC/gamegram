@@ -51,7 +51,44 @@ if (isset($_POST['inscription'])) {
             $Alert->redirect('connexion.php');
 }
 
+// Mise à jour de l'utilisateur
+if (isset($_POST['modification'])) {
 
+    // Mot de passe ?
+    $updatePassword = true;
+    if ($_POST['password'] == '') {
+        unset($_POST['password']);
+        $updatePassword = false;
+    }
+
+    $validator = new Validator($_POST, 'profil.php');
+
+    $validator->validateEmail('username');
+    $validator->validateLength('pseudo', 4);
+    $validator->validateNumeric('nb_jeux');
+
+    if ($updatePassword) {
+        $validator->validatePassword('password', 8);
+        $validator->crypt('password');
+    }
+
+    $data = $validator->getData();
+
+    // Contrôles unicité
+    if ($data['username'] !== $Auth->User->username) {
+        $validator->validateUnique('username', 'users.username');
+    }
+
+    if ($data['pseudo'] !== $Auth->User->pseudo) {
+        $validator->validateUnique('pseudo', 'users.pseudo');
+    }
+
+    // Mise à jour
+    $Auth->User->updateInformations($Auth->User->id, $data);
+
+    $Alert->setAlert('Informations mises à jour !', ['color' => SUCCESS]);
+    $Alert->redirect('profil.php');
+}
 
 if (isset($_POST['connexion'])) {
     // Je veux savoir si mon couple login + mot de passe correspond bien à User enregistré ?

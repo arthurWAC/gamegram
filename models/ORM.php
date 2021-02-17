@@ -33,6 +33,9 @@ class ORM
     // Pour le INSERT
     private $insertFieldsAndValues;
 
+    // Pour le UPDATE
+    private $updateFieldsAndValues;
+
     // Permet de savoir si une entrée donnée existe
     private $existInBDD = false; 
 
@@ -67,6 +70,9 @@ class ORM
 
         // Pour ma requête INSERT
         $this->insertFieldsAndValues = [];
+
+        // Pour ma requête UPDATE
+        $this->updateFieldsAndValues = [];
     }
 
     // Doit me permettre d'executer des requêtes
@@ -144,6 +150,40 @@ class ORM
         $this->resetPropertiesSQL();
         
        return $this->getLastId();
+    }
+
+    public function update()
+    {
+        // On construit la requête
+        $this->buildUpdateSQL();
+
+        $this->query = $this->connexion->prepare($this->sql);
+
+        // bindValue des SET
+        foreach ($this->updateFieldsAndValues as $uFaV) {
+            $this->query->bindValue(
+                $uFaV['bind'],
+                $uFaV['value'],
+                $uFaV['type']
+            );
+        }
+
+        // bindValue des WHERE
+        foreach ($this->whereFieldsAndValues as $wFaV) {
+            $this->query->bindValue(
+                ':' . $wFaV['binder'],
+                $wFaV['value'],
+                $wFaV['type']
+            );
+        }
+
+        if (!$this->query->execute()) {
+            // Erreur requête ?
+            die('Erreur [ORM 009] : ' . $this->query->errorInfo()[2]);
+        }
+        
+        // On remet "à zéro" les propriétés qui permettent de créer la requête SQL
+        $this->resetPropertiesSQL(); 
     }
 
     public function delete()
@@ -231,6 +271,16 @@ class ORM
         ];
     }
 
+    public function addUpdateFields($field, $value, $type = PDO::PARAM_STR)
+    {
+        $this->updateFieldsAndValues[] = [
+            'field' => '`' . $field . '`', // Je stocke les valeurs comme
+            'bind' => ':' . $field, // j'en aurais besoin dans mon SQL
+            'value' => $value,
+            'type' => $type
+        ];
+    }
+
     private function buildSelectSQL()
     {
         // Requête de base, SELECT fields FROM table
@@ -275,6 +325,22 @@ class ORM
         $this->sql = $sql;
     }
 
+    private function buildUpdateSQL()
+    {
+        $sql = 'UPDATE ' . $this->table . ' ';
+
+        $sql .= $this->handleSet();
+
+        // Sécurité
+        if (empty($this->whereFieldsAndValues)) {
+            die('Erreur [ORM 006] : Il faut obligatoirement renseigner des conditions pour un UPDATE');
+        }
+
+        $sql .= $this->handleWhere();
+
+        $this->sql = $sql;
+    }
+
     private function buildDeleteSQL()
     {
         $sql = 'DELETE FROM ' . $this->table . ' ';
@@ -287,6 +353,21 @@ class ORM
         $sql .= $this->handleWhere();
 
         $this->sql = $sql;
+    }
+
+    private function handleSet()
+    {
+        // Sécurité
+        if (empty($this->updateFieldsAndValues)) {
+            die('Erreur [ORM 006] : Il faut obligatoirement renseigner des valeurs à changer pour un UPDATE');
+        }
+
+        $updates = [];
+        foreach ($this->updateFieldsAndValues as $uFaV) {
+            $updates[] = $uFaV['field'] . ' = ' . $uFaV['bind'];
+        }
+
+        return 'SET ' . implode(' , ', $updates);
     }
 
     private function handleOrder()

@@ -47,10 +47,34 @@ class Comment extends ORM
         return $this->get('count');
     }
 
+    public function lastCommentsOfUser($userId)
+    {
+        $this->addWhereFields('user_id', $userId, '=', PDO::PARAM_INT);
+    	$this->setSelectFields('id');
+    	$this->addOrder('created', 'ASC');
+    	$this->setLimit(10);
+    	$comments = $this->get('all');
+
+    	$commentsComplete = [];
+
+    	foreach ($comments as $comment) {
+            $comment = new Comment($comment->id);
+            $comment->loadPost();
+            $commentsComplete[] = $comment; 
+    	}
+
+    	return $commentsComplete;
+    }
+
     public function populate($id)
     {
         if (parent::populate($id)) {
             $this->User = new User($this->user_id);
         }
+    }
+
+    public function loadPost()
+    {
+        $this->Post = new Post($this->post_id);
     }
 }

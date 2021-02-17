@@ -23,6 +23,21 @@ class User extends ORM
         $this->populate($newId);
     }
 
+    public function updateInformations($id, $data)
+    {
+        $this->addWhereFields('id', $id, '=', PDO::PARAM_INT);
+
+        $this->addUpdateFields('username', $data['username'], PDO::PARAM_STR);
+        $this->addUpdateFields('pseudo', $data['pseudo'], PDO::PARAM_STR);
+        $this->addUpdateFields('nb_games', $data['nb_jeux'], PDO::PARAM_INT);
+
+        if (isset($data['password'])) {
+            $this->addUpdateFields('password', $data['password'], PDO::PARAM_STR);
+        }
+
+        $this->update();
+    }
+
     public function login($username, $cryptedPassword)
     {
         $this->addWhereFields('username', $username, '=', PDO::PARAM_STR);
@@ -37,5 +52,47 @@ class User extends ORM
         }
         
         return false;
+    }
+
+    public function loadLastPosts()
+    {
+        $post = new Post;
+        $this->Posts = $post->lastPostsOfUser($this->id);
+    }
+
+    public function loadLastComments()
+    {
+        $comment = new Comment;
+        $this->Comments = $comment->lastCommentsOfUser($this->id);
+    }
+
+    public function loadLastPostsAndComments()
+    {
+        $this->loadLastPosts();
+        $this->loadLastComments();
+
+        $dataByCreated = [];
+
+        foreach ($this->Posts as $post) {
+            $dataByCreated[] = [
+                'created' => $post->created,
+                'model' => 'Post',
+                'data' => $post
+            ];
+        }
+
+        foreach ($this->Comments as $comment) {
+            $dataByCreated[] = [
+                'created' => $comment->created,
+                'model' => 'Comment',
+                'data' => $comment
+            ];
+        }
+
+        usort($dataByCreated, function ($item1, $item2) {
+            return $item2['created'] <=> $item1['created'];
+        });
+
+        $this->LastPostsAndComments = $dataByCreated;
     }
 }

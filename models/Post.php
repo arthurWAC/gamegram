@@ -48,6 +48,22 @@ class Post extends ORM
         return $postsComplete;
     }
 
+    public function lastPostsOfUser($userId)
+    {
+        $this->addOrder('created', 'DESC');
+        $this->addWhereFields('user_id', $userId, '=', PDO::PARAM_INT);
+        $this->setSelectFields('id');
+        $this->setLimit(10);
+        $posts = $this->get('all');
+
+        $postsComplete = [];
+        foreach ($posts as $post) {
+            $postsComplete[] = new Post($post->id);
+        }
+
+        return $postsComplete;
+    }
+
     public function loadComments($nbComments)
     {
         $comment = new Comment;
