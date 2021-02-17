@@ -1,6 +1,4 @@
 <?php
-define('SESSION_ALERT', 'session_alert');
-
 class Alert
 {
     // Pas de constructeur

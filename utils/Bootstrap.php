@@ -1,20 +1,4 @@
 <?php
-// Couleurs
-define('PRIMARY', 'primary');
-define('SECONDARY', 'secondary');
-define('INFO', 'info');
-define('SUCCESS', 'success');
-define('DANGER', 'danger');
-define('WARNING', 'warning');
-define('LIGHT', 'light');
-define('DARK', 'dark');
-define('LINK', 'link');
-
-// Eléments
-define('BTN', 'btn');
-define('BADGE', 'badge');
-define('BG', 'bg');
-
 class Bootstrap
 {
 	// Propriétés - private par défaut
@@ -81,8 +65,10 @@ class Bootstrap
 		return '</main>';
 	}
 	
-	public function addMenu($name, $link)
+	public function addMenu($name, $linkParams)
 	{
+		$link = 'index.php?dir=' . $linkParams['dir'] . '&page=' . $linkParams['page'];
+
 		$this->menuItems[] = [
 			'name' => $name,
 			'link' => $link

@@ -54,8 +54,17 @@ echo $html->startMain();
             include('elements/comment_seul.php');
         }
     }
-    ?>
 
+    // $member->loadLastPosts();
+    // foreach ($member->Posts as $post) {
+    //     include('elements/post_seul.php');
+    // }
+
+    // $member->loadLastComments();
+    // foreach ($member->Comments as $comment) {
+    //     include('elements/comment_seul.php');
+    // }
+    ?>
     </div>
 </div>
 

@@ -76,7 +76,6 @@ class User extends ORM
         foreach ($this->Posts as $post) {
             $dataByCreated[] = [
                 'created' => $post->created,
-                'model' => 'Post',
                 'data' => $post
             ];
         }
@@ -84,7 +83,6 @@ class User extends ORM
         foreach ($this->Comments as $comment) {
             $dataByCreated[] = [
                 'created' => $comment->created,
-                'model' => 'Comment',
                 'data' => $comment
             ];
         }

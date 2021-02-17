@@ -1,16 +1,39 @@
 <?php
 require('loader.php');
 
+$urls = [
+    ['dir' => '', 'page' => '', 'options' => [], 
+    'result' => 'index.php'],
 
+    ['dir' => 'games', 'page' => 'jeux', 'options' => [], 
+    'result' => 'index.php?dir=games&page=jeux'],
 
+    ['dir' => 'games', 'page' => 'un_jeu', 'options' => ['id' => 3], 
+    'result' => 'index.php?dir=games&page=jeux&id=3'],
+];
 
+foreach ($urls as $url) {
+    $result = Router::url(
+        $url['dir'],
+        $url['page'],
+        $url['options']
+    );
+
+    if ($result == $url['result']) {
+        echo '<p style="color: green;">TEST OK</p>';
+    } else {
+        echo '<p style="color: red;">TEST KO</p>';
+    }
+}
+
+/*
 $post = new Post();
 
 $posts = $post->lastPosts();
 echo '<pre>';
 print_r($posts);
 echo '</pre>';
-/*
+
 
 
 $faker = Faker\Factory::create('fr_FR');

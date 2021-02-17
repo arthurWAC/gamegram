@@ -201,7 +201,10 @@ if (isset($_POST['nouveau_like'])) {
     );
 
     $Alert->setAlert('Post liké', ['color' => SUCCESS]);
-    $Alert->redirect('feed.php#post_' . $data['post_id']);
+    // Renvoyer vers la page "référante", c'est à dire celle qui nous a amené ici
+    $Alert->redirect($_SERVER['HTTP_REFERER'] . '#post_' . $data['post_id']);
+    // Doc $_SERVER : https://www.php.net/manual/fr/reserved.variables.server.php
+    // Google : "PHP $_SERVER"
 }
 
 
@@ -219,5 +222,5 @@ if (isset($_POST['unlike'])) {
     );
 
     $Alert->setAlert('Post Unliké', ['color' => SUCCESS]);
-    $Alert->redirect('feed.php#post_' . $data['post_id']);
+    $Alert->redirect($_SERVER['HTTP_REFERER'] . '#post_' . $data['post_id']);
 }

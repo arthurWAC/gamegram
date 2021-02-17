@@ -1,6 +1,4 @@
 <?php
-define('SESSION_USER_ID', 'session_user_id');
-
 class Auth
 {
     public $User;

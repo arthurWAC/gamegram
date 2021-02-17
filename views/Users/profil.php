@@ -40,6 +40,10 @@ echo $html->startMain();
 	
 	echo $form->form();
 	?>
+    <br /><hr />
+    <p class="lead text-center">Ton Feed ?</p>
+    <p class="text-center"><?= $html->button('Le feed de ' . $Auth->User->pseudo, 'feed_user.php?id=' . $Auth->User->id, ['color' => WARNING]); ?></p>
+	
     </div>
 </div>
 <?php
