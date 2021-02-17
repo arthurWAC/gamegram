@@ -1,32 +1,29 @@
 <?php
-include('loader.php'); // Ma ligne de base sur chacun de mes fichiers
+include('loader.php');
+// Ce nouveau fichier index il est plus lié au contexte de mon projet
+// C'est un morceau de mon framework
+// On va toujours rester sur index.php
 
-$html = new Bootstrap('Accueil', 'Bienvenue sur '. NAME_APPLICATION .' !');
+// dir et page et valeur par défaut
+$dir = $_GET['dir'] ?? 'Games';
+$page = $_GET['page'] ?? 'accueil';
+// => $dir et $page utilisées dans Templates/front
 
-// Début du DOM HTML
-echo $html->startDOM();
+// Appel dynamique de mes controllers ------------------------------------
+$controller = ucfirst($dir) . 'Controller'; // "GamesController"
+$method = 'view_' . $page; // "view_accueil"
 
-// Menu
-include('elements/menu.php');
+$call = new $controller; // new GamesController;
+$data = $call->{$method}();
 
-echo $html->menu();
+// Array ( [title] => GameGram [description] => Un tout nouveau réseau ...)
+// $_title = 'Gamegram';
+// $_description = 'Un tout nouveau réseau ...';
 
-// Main
-echo $html->startMain();
-?>
-<div class="starter-template text-center py-5 px-3">
-	<h1><?= NAME_APPLICATION; ?></h1>
-	<p class="lead">Un tout nouveau réseau social<br />centré sur l'univers des jeux-vidéos Multijoueurs !</p>
-	<p>
-		<?= $html->image('manettes.jpg', ['alt' => 'Manettes de jeux vidéo', 'width' => '40%', 'class' => 'rounded']);?>
-	</p>
-	
-	<p>
-		<?= $html->button('Présentation', 'presentation.php');?>
-		<?= $html->button('Je crée un compte', 'inscription.php', ['color' => SUCCESS]);?>
-	</p>
-	
-</div>
-<?php
-echo $html->endMain();
-echo $html->endDOM();
+foreach ($data as $name => $value) {
+    $nameVariable = '_' . $name;
+    ${$nameVariable} = $value;
+}
+// ------------------------------------------------------------------------
+
+include(DIR_VIEWS . 'Templates/front.php');

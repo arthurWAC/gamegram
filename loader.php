@@ -2,36 +2,36 @@
 // Démarrage de la session, pour utiliser $_SESSION
 session_start();
 
-// Composer
-// require('vendor/autoload.php');
+// Constantes ------------------------
+define('DIR_CONSTANTES', 'constantes' . DIRECTORY_SEPARATOR);
+require(DIR_CONSTANTES . 'system.php');
+require(DIR_CONSTANTES . 'bootstrap.php');
+require(DIR_CONSTANTES . 'session.php');
+// -----------------------------------
 
-// Constantes
-require('constantes.php');
+// Auto-load -------------------------
+function loader($class)
+{
+    $folders = [DIR_MODELS, DIR_CONTROLLERS, DIR_UTILS];
 
-// ORM et Modèles
-require(DIR_MODELS . 'ORM.php');
-require(DIR_MODELS . 'Validator.php');
+    foreach ($folders as $folder) {
+        $fileName = $folder . $class . '.php';
 
-require(DIR_MODELS . 'Game.php');
-require(DIR_MODELS . 'Platform.php');
-require(DIR_MODELS . 'Publisher.php');
-require(DIR_MODELS . 'Family.php');
-require(DIR_MODELS . 'User.php');
-require(DIR_MODELS . 'Post.php');
-require(DIR_MODELS . 'Comment.php');
-require(DIR_MODELS . 'Like.php');
+        if (file_exists($fileName)) {
+            require($fileName);
+            return true;
+        }
+    }
 
-// Utils
-require(DIR_UTILS . 'Bootstrap.php');
-require(DIR_UTILS . 'BootstrapForm.php');
-require(DIR_UTILS . 'BootstrapAlert.php');
+    return false;
+}
 
-require(DIR_UTILS . 'Design.php');
-$Design = new Design; // Disponible partout dans toutes mes pages
+spl_autoload_register('loader');
+// -------------------------------------
 
-
-require(DIR_UTILS . 'Alert.php');
-$Alert = new Alert; // Disponible partout dans toutes mes pages
-
-require(DIR_UTILS . 'Auth.php');
-$Auth = new Auth; // Disponible partout dans toutes mes pages
+// Instanciations par défaut de certains utilitaires ---------------
+// Disponible partout dans toutes mes pages
+$Design = new Design;
+$Alert = new Alert;
+$Auth = new Auth;
+// -----------------------------------------------------------------
