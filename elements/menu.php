@@ -5,6 +5,7 @@ $html->addMenu('Jeux', 'jeux.php');
 
 if ($Auth->logged) {
     $html->addMenu('Feed', 'feed.php');
+    $html->addMenu('Mes infos', 'profil.php');
     $html->addMenu('Déconnexion', 'controllers.php?action=logout');
 } else {
     $html->addMenu('Inscription', 'inscription.php');
