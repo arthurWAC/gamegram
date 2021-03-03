@@ -6,7 +6,7 @@
 	</p>
 	
 	<p>
-		<?= $html->button('Présentation', 'presentation.php');?>
-		<?= $html->button('Je crée un compte', 'inscription.php', ['color' => SUCCESS]);?>
+		<?= $html->button('Présentation', ['dir' => 'games', 'page' => 'presentation']);?>
+		<?= $html->button('Je crée un compte', ['dir' => 'users', 'page' => 'inscription'], ['color' => SUCCESS]);?>
 	</p>
 </div>

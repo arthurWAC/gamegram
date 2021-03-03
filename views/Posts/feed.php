@@ -1,42 +1,23 @@
-<?php
-include('loader.php');
-
-// Sécurité sur le fait d'être déjà connecté
-if (!$Auth->logged) {
-	$Alert->setAlert('Tu dois être connecté pour accéder à cette page !', ['color' => DANGER]);
-    $Alert->redirect('connexion.php');
-}
-
-$html = new Bootstrap('Feed', 'Derniers posts de '. NAME_APPLICATION .' !');
-
-// Début du DOM HTML
-echo $html->startDOM();
-
-include('elements/menu.php');
-
-echo $html->menu();
-
-// Main
-echo $html->startMain();
-?>
 <div class="starter-template text-center mt-5 px-3">
 	<h1 class="mb-3">Derniers posts</h1>
-	<p class="text-center"><?= $html->button('+ Nouveau Post', 'new_post.php', ['color' => SUCCESS]); ?></p>
+	<p class="text-center"><?= $html->button(
+		'+ Nouveau Post',
+		['dir' => 'posts', 'page' => 'create'],
+		['color' => SUCCESS]
+	); ?></p>
 </div>
 
 <div class="row justify-content-center mt-5">
 	<div class="col col-sm-8">
 	<?php
-	$post = new Post();
-	$posts = $post->lastPostsWithGameAndUser();
-	foreach ($posts as $post): ?>
+	foreach ($_posts as $post): ?>
 	<div class="card mb-5" id="post_<?= $post->id; ?>">
 		<div class="card-header">
 
 			<div class="row">
 				<div class="col-8">
 					Le <?= date('d/m/Y', strtotime($post->created)); ?> par 
-					<a href="feed_user.php?id=<?= $post->User->id; ?>">
+					<a href="<?= Router::urlView('posts', 'user', ['id' => $post->User->id]); ?>">
 						<?= $post->User->pseudo; ?>
 					</a>
 				</div>
@@ -49,7 +30,7 @@ echo $html->startMain();
 				// Like ou pas
 				if ($post->liked) {
 					// Post liké, bouton "unlike"
-					$form = new BootstrapForm('Unlike', 'controllers.php', METHOD_POST);
+					$form = new BootstrapForm('Unlike', 'Like', METHOD_POST);
 
 				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
 					$form->setSubmit('Unlike', ['color' => WARNING, 'class' => 'btn-sm float-end']);
@@ -57,7 +38,7 @@ echo $html->startMain();
 					echo $form->form();
 				} else {
 					// Post non liké, bouton "like"
-					$form = new BootstrapForm('Nouveau Like', 'controllers.php', METHOD_POST);
+					$form = new BootstrapForm('Nouveau Like', 'Like', METHOD_POST);
 
 				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
 					$form->setSubmit('Like', ['color' => SUCCESS, 'class' => 'btn-sm float-end']);
@@ -112,13 +93,12 @@ echo $html->startMain();
 		</div>
 
 	    <div class="card-footer mt-3">
-	    	<?= $html->button('Voir le post', 'post.php?id=' . $post->id, ['color' => SUCCESS, 'class' => 'btn-sm']); ?>
+	    	<?= $html->button(
+				'Voir le post',
+				['dir' => 'posts', 'page' => 'one', 'options' => ['id' => $post->id]],
+				['color' => SUCCESS, 'class' => 'btn-sm']); ?>
 	    </div>
 	</div>
 	<?php endforeach; ?>
 	</div>
 </div>
-
-<?php
-echo $html->endMain();
-echo $html->endDOM();

@@ -16,6 +16,9 @@ class Post extends ORM
         parent::__construct();
         $this->setTable('posts');
 
+        $this->Game = new Game;
+        $this->User = new User;
+
         if ($id != null) {
             $this->populate($id);
         }

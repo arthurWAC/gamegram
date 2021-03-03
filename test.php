@@ -9,7 +9,7 @@ $urls = [
     'result' => 'index.php?dir=games&page=jeux'],
 
     ['dir' => 'games', 'page' => 'un_jeu', 'options' => ['id' => 3], 
-    'result' => 'index.php?dir=games&page=jeux&id=3'],
+    'result' => 'index.php?dir=games&page=un_jeu&id=3'],
 ];
 
 foreach ($urls as $url) {

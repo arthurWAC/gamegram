@@ -65,10 +65,8 @@ class Bootstrap
 		return '</main>';
 	}
 	
-	public function addMenu($name, $linkParams)
+	public function addMenu($name, $link)
 	{
-		$link = 'index.php?dir=' . $linkParams['dir'] . '&page=' . $linkParams['page'];
-
 		$this->menuItems[] = [
 			'name' => $name,
 			'link' => $link
@@ -79,7 +77,7 @@ class Bootstrap
 	{
 		$menuHtml = '<nav class="navbar navbar-expand-md navbar-dark bg-'. SUCCESS .'">
   <div class="container-fluid">
-    <a class="navbar-brand" href="./">'. NAME_APPLICATION .'</a>
+    <a class="navbar-brand" href="'. Router::urlView() .'">'. NAME_APPLICATION .'</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -127,7 +125,7 @@ class Bootstrap
 		return '<img src="'. DIR_ASSETS . DIR_IMG . $image . '" class="'. $class .'" alt="'. $alt .'" style="max-width:'. $width .'">';
 	}
 	
-	public function button($name, $link, $options = [])
+	public function button($name, $linkParams, $options = [])
 	{
 		// Gestion de la couleur
 		$color = $options['color'] ?? PRIMARY; 
@@ -137,6 +135,12 @@ class Bootstrap
 		
 		// Classes supplémentaires
 		$class .= $options['class'] ?? '';
+
+		$link = Router::urlView(
+			$linkParams['dir'],
+			$linkParams['page'],
+			$linkParams['options'] ?? []
+		);
 		
 		return '<a href="'. $link .'" class="'. $class .'">' . $name . '</a>';
 	}

@@ -17,7 +17,7 @@
 				// Like ou pas
 				if ($post->liked) {
 					// Post liké, bouton "unlike"
-					$form = new BootstrapForm('Unlike', 'controllers.php', METHOD_POST);
+					$form = new BootstrapForm('Unlike', 'Like', METHOD_POST);
 
 				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
 					$form->setSubmit('Unlike', ['color' => WARNING, 'class' => 'btn-sm float-end']);
@@ -25,7 +25,7 @@
 					echo $form->form();
 				} else {
 					// Post non liké, bouton "like"
-					$form = new BootstrapForm('Nouveau Like', 'controllers.php', METHOD_POST);
+					$form = new BootstrapForm('Nouveau Like', 'Like', METHOD_POST);
 
 				    $form->addInput('post_id', TYPE_HIDDEN, ['value' => $post->id]);
 					$form->setSubmit('Like', ['color' => SUCCESS, 'class' => 'btn-sm float-end']);
@@ -57,7 +57,9 @@
 	    </div>
 
 		<div class="card-footer mt-3">
-	    	<?= $html->button('Voir le post', 'post.php?id=' . $post->id, ['color' => SUCCESS, 'class' => 'btn-sm']); ?>
+			<?= $html->button('Voir le post', 
+			['dir' => 'posts', 'page' => 'one', 'options' => ['id' => $post->id]],
+			['color' => SUCCESS, 'class' => 'btn-sm']); ?>
 	    </div>
     </div>
 

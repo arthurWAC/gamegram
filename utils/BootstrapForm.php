@@ -13,10 +13,10 @@ class BootstrapForm
 	private $htmlAttributs; // Pour gérer efficacement les attributs HTML des mes inputs
 	
 	// Constructeur
-	public function __construct($name, $action, $method = METHOD_POST)
+	public function __construct($name, $model, $method = METHOD_POST)
 	{
 		// $name => "slug" => 'Inscription nouvel utilisateur' => 'inscription_nouvel_utilisateur'
-		$this->name = $this->slug($name);
+		$this->name = $this->camelCase($name);
 		
 		// On va controler la méthode
 		if (!in_array($method, METHODS)) {
@@ -24,7 +24,7 @@ class BootstrapForm
 		}
 		
 		$this->method = $method;
-		$this->action = $action;
+		$this->action = Router::urlProcess($model . 's', $this->name);
 	}
 	
 	public function addInput($name, $type, $options = [])
@@ -196,9 +196,6 @@ class BootstrapForm
 		// Début du formulaire
 		$form = '<form method="'. $this->method .'" action="'. $this->action .'">';
 		
-		// Pour savoir, sur la page d'atterissage, quel est le formulaire soumis
-		$form .= $this->input($this->name, TYPE_HIDDEN);
-		
 		// Inputs
 		foreach ($this->inputs as $input) {
 			$form .= $this->input($input['name'], $input['type'], $input['options']);
@@ -213,9 +210,18 @@ class BootstrapForm
 		return $form;
 	}
 	
-	// ????
+	// Inscription Nouvel Utilisateur => inscription_nouvel_utilisateur
 	public function slug($string)
 	{
 		return strtolower(trim(preg_replace('/[^A-Za-z0-9_]+/', '_', $string)));
+	}
+
+	// Inscription Nouvel Utilisateur => inscriptionNouvelUtilisateur
+	public function camelCase($string)
+	{
+		$string = $this->slug($string); // inscription_nouvel_utilisateur
+		$string = str_replace('_', ' ', $string); // inscription nouvel utilisateur
+		$string = ucwords($string); // Inscription Nouvel Utilisateur
+		return lcfirst(str_replace(' ', '', $string)); // InscriptionNouvelUtilisateur // inscriptionNouvelUtilisateur
 	}
 }

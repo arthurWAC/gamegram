@@ -1,23 +1,24 @@
 <?php
 // Menu
 $html->addMenu('Présentation', 
-    ['dir' => 'games', 'page' => 'presentation']
+    Router::urlView('games', 'presentation')
 );
 
 $html->addMenu('Jeux', 
-    ['dir' => 'games', 'page' => 'jeux']
+    Router::urlView('games', 'all')
 );
 
 if ($Auth->logged) {
-    // $html->addMenu('Feed', 'feed.php');
-    // $html->addMenu('Mes infos', 'profil.php');
-    // $html->addMenu('Déconnexion', 'controllers.php?action=logout');
+    $html->addMenu('Feed', Router::urlView('posts', 'feed'));
+    $html->addMenu('Mes infos', Router::urlView('users', 'profil'));
+
+    $html->addMenu('Déconnexion', Router::urlProcess('users', 'logout'));
 } else {
     $html->addMenu('Inscription', 
-        ['dir' => 'users', 'page' => 'inscription']
+        Router::urlView('users', 'inscription')
     );
     $html->addMenu('Connexion', 
-        ['dir' => 'users', 'page' => 'connexion']
+        Router::urlView('users', 'connexion')
     );
 }
 

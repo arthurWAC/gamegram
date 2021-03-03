@@ -7,7 +7,7 @@
 	<div class="col col-sm-8 col-lg-4">
 	<?php
 	
-	$form = new BootstrapForm('Connexion', 'controllers.php', METHOD_POST);
+	$form = new BootstrapForm('Connexion', 'User', METHOD_POST);
 
 	$form->addInput('username',	TYPE_EMAIL, 	['label' => 'Adresse mail']);
 	$form->addInput('password', TYPE_PASSWORD, 	['label' => 'Mot de passe']);
@@ -18,6 +18,6 @@
 	?>
     <br /><hr />
     <p class="lead text-center">Pas encore de compte ?</p>
-    <p class="text-center"><?= $html->button('inscription', 'inscription.php', ['color' => WARNING]); ?></p>
+    <p class="text-center"><?= $html->button('inscription', ['dir' => 'users', 'page' => 'inscription'], ['color' => WARNING]); ?></p>
 	</div>
 </div>

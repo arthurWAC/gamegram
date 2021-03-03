@@ -7,7 +7,7 @@
 	<div class="col col-sm-8 col-lg-4">
 	<?php
 	
-	$form = new BootstrapForm('Inscription', 'controllers.php', METHOD_POST);
+	$form = new BootstrapForm('Inscription Nouvel Utilisateur', 'User', METHOD_POST);
 
 	$form->addInput('username',	TYPE_EMAIL, 	['label' => 'Adresse mail', 'placeholder' => 'Pour spammer ta boite mail chaque jour']);
 	$form->addInput('password', TYPE_PASSWORD, 	['label' => 'Mot de passe', 'placeholder' => '8 caractères minimum']);
@@ -20,6 +20,6 @@
 	?>
     <hr />
     <p class="lead text-center">Déjà inscrit ?</p>
-    <p class="text-center"><?= $html->button('Connexion', 'connexion.php', ['color' => WARNING]); ?></p>
+    <p class="text-center"><?= $html->button('Connexion', ['dir' => 'users', 'page' => 'connexion'], ['color' => WARNING]); ?></p>
 	</div>
 </div>

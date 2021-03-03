@@ -19,8 +19,18 @@ class Alert
     }
 
     // Méthode qui redirige
-    public function redirect($link)
+    public function redirect($linkParams)
     {
+        if (isset($linkParams['url'])) {
+            $link = $linkParams['url'];
+        } else {
+            $link = Router::urlView(
+                $linkParams['dir'],
+                $linkParams['page'],
+                $linkParams['options'] ?? []
+            );
+        }
+
         header('Location: ' . $link);
         exit;
     }
