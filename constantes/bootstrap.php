@@ -30,8 +30,12 @@ define('TYPE_EMAIL', 'email'); // Champ mail
 define('TYPE_HIDDEN', 'hidden'); // Champ caché
 define('TYPE_SELECT', 'select'); // select
 define('TYPE_TEXTAREA', 'textarea'); // textarea
-define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN, TYPE_EMAIL, TYPE_SELECT, TYPE_TEXTAREA]);
+define('TYPE_RADIO', 'radio');
+define('TYPES', [TYPE_TEXT, TYPE_PASSWORD, TYPE_NUMBER, TYPE_HIDDEN, TYPE_EMAIL, TYPE_SELECT, TYPE_TEXTAREA, TYPE_RADIO]);
 
 define('FORM_CONTROL', 'form-control');
 define('FORM_SELECT', 'form-select');
 define('FORM_LABEL', 'form-label');
+define('FORM_CHECK', 'form-check');
+define('FORM_CHECK_LABEL', 'form-check-label');
+define('FORM_CHECK_INPUT', 'form-check-input');

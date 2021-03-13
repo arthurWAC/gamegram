@@ -53,4 +53,43 @@ class GamesViewController extends Controller
             'description' => 'Présentation de ' . $this->Game->name
         ];
     }
+
+    public function search()
+    {
+        $games = [];
+
+        // Si j'ai du GET, je vais chercher les games
+        if (Router::check('name')) {
+            $name = Router::get('name', 'is_string');
+            $publisherId = Router::get('publisher_id', 'is_numeric');
+            $familyId = Router::get('family_id', 'is_numeric');
+            $platformId = Router::get('platform_id', 'is_numeric');
+            $note = Router::get('note', 'is_numeric');
+
+            // Je recherche
+            $games = $this->Game->search(
+                $name,
+                [
+                    'publisher_id' => $publisherId,
+                    'family_id' => $familyId,
+                    'platform_id' => $platformId,
+                    'note' =>  $note
+                ]
+            );
+        }
+        
+        return [
+            // Résultats de recherche
+            'games' => $games,
+
+            // Pour la recherche
+            'publishers' => $this->Game->Publisher->getList(),
+            'families' => $this->Game->Family->getList(),
+            'platforms' =>  $this->Game->Platform->getList(),
+
+            // Infos de base
+            'title' => 'Recherche',
+            'description' => 'Chercher un jeu dans la base de données'
+        ];
+    }
 }

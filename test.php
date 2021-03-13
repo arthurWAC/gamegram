@@ -1,6 +1,34 @@
 <?php
 require('loader.php');
 
+$tests = [
+    [
+        [1 => 'A', 2 => 'B'], [0 => 'C', 1 => 'A', 2 => 'B']
+    ],
+    [
+        [2 => 'B', 1 => 'A'], [0 => 'C', 2 => 'B', 1 => 'A']
+    ],
+    [
+        [0 => 'D', 1 => 'A', 2 => 'B'], [0 => 'C', 1 => 'A', 2 => 'B']
+    ],
+    [
+        [1 => 'A', 0 => 'D', 2 => 'B'], [0 => 'C', 1 => 'A', 2 => 'B']
+    ],
+];
+
+foreach ($tests as $test) {
+
+    $array = Libarray::pop($test[0], 'C');
+
+    if ($array == $test[1]) {
+        echo 'TEST OK <br />';
+    }
+}
+
+
+
+
+/*
 $urls = [
     ['dir' => '', 'page' => '', 'options' => [], 
     'result' => 'index.php'],
@@ -26,7 +54,6 @@ foreach ($urls as $url) {
     }
 }
 
-/*
 $post = new Post();
 
 $posts = $post->lastPosts();

@@ -24,7 +24,18 @@ class BootstrapForm
 		}
 		
 		$this->method = $method;
-		$this->action = Router::urlProcess($model . 's', $this->name);
+
+		// POST => Process
+		if ($this->method == METHOD_POST) {
+			$this->action = Router::urlProcess($model . 's', $this->name);
+		}
+
+		// GET => View
+		if ($this->method == METHOD_GET) {
+			$this->action = Router::urlView();
+			$this->addInput('dir', TYPE_HIDDEN, ['value' => $model . 's']);
+			$this->addInput('page', TYPE_HIDDEN, ['value' => $this->name]);
+		}
 	}
 	
 	public function addInput($name, $type, $options = [])
@@ -68,8 +79,6 @@ class BootstrapForm
 			$this->handleHtmlAttributs($options, 'placeholder');
 		}
 		
-		
-		
 		// Construction de mon <input ... /> ou <select ...> ou <texarea ...>
 		switch ($type) {
 
@@ -85,6 +94,10 @@ class BootstrapForm
 
 				if (!isset($options['data'])) {
 					die('Erreur fatale [BF 003] data manquante pour le select ' . $name);
+				}
+
+				if (isset($options['empty'])) {
+    				$options['data'] = Libarray::pop($options['data'], $options['empty']);
 				}
 
 				foreach ($options['data'] as $value => $name) {
@@ -117,6 +130,37 @@ class BootstrapForm
 				}
 
 				$input .= '</textarea>';
+			break;
+
+			case TYPE_RADIO:
+
+				if (!isset($options['data'])) {
+					die('Erreur fatale [BF 004] data manquante pour le radio ' . $name);
+				}
+
+				foreach ($options['data'] as $value => $label) {
+					$input .= '<div class="'. FORM_CHECK .'">';
+
+					// Quelque chose d'unique sur la page courante
+					$id = $this->slug($this->name . ' ' . $name . ' ' . $label . ' ' . $value);
+					
+					$checked = '';
+					if (isset($options['value']) && $options['value'] == $value) {
+						$checked = ' checked';
+					}
+					
+					$input .= '<input class="'. FORM_CHECK_INPUT .'" type="radio" name="'. $name .'" 
+													value="'. $value .'" id="'. $id .'" '. $checked .'/>';
+					$input .= '<label class="'. FORM_CHECK_LABEL .'" for="'. $id .'">' .
+								$label .
+								'</label>';
+
+					$input .= '</div>';
+				}
+			
+  
+
+
 			break;
 
 			default:

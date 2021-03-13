@@ -10,6 +10,10 @@ class Game extends ORM
         parent::__construct();
         $this->setTable('games');
 
+        $this->Platform = new Platform;
+        $this->Publisher = new Publisher;
+        $this->Family = new Family;
+
         if ($id != null) {
             $this->populate($id);
         }
@@ -21,7 +25,6 @@ class Game extends ORM
         $this->setSelectFields('id', 'name', 'year', 'note');
         $this->addWhereFields('public', 1);
         $this->addOrder('name');
-        // $this->addOrder('', 'RAND()'); // ORDER BY RAND()
 
         return $this->get('all');
     }
@@ -36,6 +39,11 @@ class Game extends ORM
         }
 
         return $gamesById;
+    }
+
+    public function search($name, $options = [])
+    {
+        
     }
 
     // Méthode du coeur du système

@@ -47,7 +47,7 @@ class Router
         }
     }
 
-    public function get($name, $control = '')
+    public static function get($name, $control = '')
     {
         if (!isset($_GET[$name])) {
             die('Erreur Routing [003] : ' . $name . ' inexistant');
@@ -58,5 +58,10 @@ class Router
         }
 
         return $_GET[$name];
+    }
+
+    public static function check($name)
+    {
+        return isset($_GET[$name]);
     }
 }

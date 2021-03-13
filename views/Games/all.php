@@ -1,6 +1,19 @@
 <div class="starter-template text-center mt-5 px-3">
 	<h1>Liste des jeux</h1>
 	<p class="lead">Découvre la liste de jeux disponibles dans <?= NAME_APPLICATION ?> ! </p>
+
+	<?php
+	// Si je suis connecté, lien vers la recherche
+	if ($Auth->logged) {
+		echo $html->button('Recherche', [
+				'dir' => 'games',
+				'page' => 'search'
+			],
+			['color' => WARNING]
+		) . '<br /><br />';
+	}
+	?>
+
 </div>
 <div class="row justify-content-center">
 	<div class="col col-md-6">
