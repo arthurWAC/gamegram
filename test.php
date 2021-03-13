@@ -1,6 +1,17 @@
 <?php
 require('loader.php');
 
+
+$data = (new Collection)->extractInformation(
+    $Auth->User->id,
+    'family'
+);
+
+echo '<pre>';
+print_r($data);
+echo '</pre>';
+
+/*
 $tests = [
     [
         [1 => 'A', 2 => 'B'], [0 => 'C', 1 => 'A', 2 => 'B']
@@ -28,7 +39,6 @@ foreach ($tests as $test) {
 
 
 
-/*
 $urls = [
     ['dir' => '', 'page' => '', 'options' => [], 
     'result' => 'index.php'],
